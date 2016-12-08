@@ -22,11 +22,16 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 OR OTHER DEALINGS IN THE SOFTWARE.
 """
 import sys
+import os
 
 from libs.deployment.factory import DeploymentFactory
 
+# The wxgigo project source files dir,
+# it could be extracted somewhere after downloading Github archieve file
+WXGIGO_SOURCE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 def main():
-    deployment = DeploymentFactory().create()
+    deployment = DeploymentFactory(WXGIGO_SOURCE_DIR).create()
     if not deployment:
         print "Failed to intialize Deployment instance"
         sys.exit(1)

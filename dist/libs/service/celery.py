@@ -29,22 +29,14 @@ from fabric.colors import green
 from fabric.utils import puts
 import cuisine
 
-SYSTEMD_DIR='/usr/lib/systemd/system/'
-SYSTEMD_CELERY_FILENAME='celery.service'
-
-SYSV_DIR='/etc/init.d/'
-SYSV_CELERY_FILENAME='celeryd'
-
-CELERY_CONF_DIR='/etc/default/'
-CELERY_CONF_FILENAME='celeryd'
-
-TMPFILES_DIR='/usr/lib/tmpfiles.d/'
-TMPFILES_CONF_FILENAME='celery.conf'
+from libs.option import CeleryServiceOption
 
 class CeleryService(object):
-    def __init__(self, host):
+    def __init__(self, host, wxgigo_appserver_home):
         puts(green("Collecting Celery service information..."))
         self.host = host
+        self.wxgigo_appserver_home = wxgigo_appserver_home
+        self.option = CeleryServiceOption(host)
 
     def enable(self):
         # enable nginx service
@@ -64,6 +56,9 @@ class CeleryService(object):
 
         :return:
         """
+        TMPFILES_DIR = '/usr/lib/tmpfiles.d/'
+        TMPFILES_CONF_FILENAME = 'celery.conf'
+
         if not os.path.exists(TMPFILES_DIR):
             print "Error configure celery tmpfiles: no {0}".format(TMPFILES_DIR)
             sys.exit(1)
@@ -72,6 +67,9 @@ class CeleryService(object):
         cuisine.file_upload(remote_file, 'conf/celery/celery.tmpfiles')
 
     def configure_systemd_unit(self, conf_file):
+        SYSTEMD_DIR = '/usr/lib/systemd/system/'
+        SYSTEMD_CELERY_FILENAME = 'celery.service'
+
         if not os.path.exists(SYSTEMD_DIR):
             print "Error configure celery systemd unit: no {0}".format(SYSTEMD_DIR)
             sys.exit(1)
@@ -81,12 +79,18 @@ class CeleryService(object):
         unit_content = \
             cuisine.text_template(cuisine.file_local_read('conf/celery/celery.service'),
                                   dict(celery_conf_file=conf_file,
-                                       wxgigo_appserver_home=self.host.option.wxgigo_appserver_home))
+                                       wxgigo_appserver_home=self.wxgigo_appserver_home))
         cuisine.file_write(unit_file, unit_content)
 
     def configure(self):
+        if self.host.dist_info.major_distname in ('centos7', 'redhat7', 'fedora7', 'oracle7'):
+            self.configure_for_redhat7()
+
+    def configure_for_redhat7(self):
         cuisine.user_ensure('celery')
 
+        CELERY_CONF_DIR = '/etc/default/'
+        CELERY_CONF_FILENAME = 'celeryd'
         if not os.path.exists(CELERY_CONF_DIR):
             print "Error configure celery service: no {0}".format(CELERY_CONF_DIR)
             sys.exit(1)
@@ -96,8 +100,10 @@ class CeleryService(object):
         conf_file = os.path.join(CELERY_CONF_DIR, CELERY_CONF_FILENAME)
         cuisine.file_write(conf_file, conf_content)
 
-        if self.host.dist_info.major_distname in ('centos7', 'redhat7'):
-            self.configure_tmpfiles()
-            self.configure_systemd_unit(conf_file)
+        self.configure_tmpfiles()
+        self.configure_systemd_unit(conf_file)
 
+    def configure_for_redhat6(self):
+        SYSV_DIR = '/etc/init.d/'
+        SYSV_CELERY_FILENAME = 'celeryd'
 

@@ -129,13 +129,25 @@ class BaseHost(object):
                 for cmd in cmd_list:
                     cuisine.run(cmd)
 
+    def setup_deploy_user(self):
+        puts(green('Setup deploy user for {0}'.format(self.desc)))
+        cuisine.user_ensure(self.option.deploy_user)
 
+    def setup_wxgigo_home(self):
+        puts(green('Setup deploy dir for {0}'.format(self.desc)))
+
+        cuisine.dir_ensure(self.option.wxgigo_home,
+                           owner=self.option.deploy_user, group=self.option.deploy_group)
 
     def pre_deploy(self):
         # setup env
         self.setup_cuisine()
         self.setup_sys_packages()
         self.setup_python_packages()
+        # make sure deploy_user  and wxgigo_home is created
+        self.setup_deploy_user()
+        self.setup_wxgigo_home()
+        # setup needed os parameters
         self.setup_os_env()
 
     def post_deploy(self):

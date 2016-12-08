@@ -22,18 +22,46 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 OR OTHER DEALINGS IN THE SOFTWARE.
 """
 import os
+import sys
 import cuisine
+from fabric.api import put
 
 GIT_ARCHIVE_URL = 'https://github.com/rfancn/wxgigo/archive/master.zip'
 
 class BaseProject(object):
-    def __init__(self, host):
+    def __init__(self, host, options):
         self.host = host
+        # here is deploy_options contains all other kind of host's configured options
+        self.options = options
 
-    def get_project_home(self):
+    @property
+    def home(self):
         return os.path.join(self.host.option.wxgigo_home, self.project_name)
 
     def setup_source_files(self):
+        """
+        Copy latest project source files from Github
+
+        :param sub_project:
+        :return:
+        """
+        self.setup_source_files_from_local()
+
+    def setup_source_files_from_local(self):
+        wxgigo_src_dir = self.options.get('wxgigo_src_dir', None)
+        if not wxgigo_src_dir:
+            print "Error get wxgigo source dir"
+            sys.exit(1)
+
+        local_project_src_dir = os.path.join(wxgigo_src_dir, self.project_name)
+        if not os.path.exists(local_project_src_dir):
+            print 'Error get local project source dir: {0}'.format(local_project_src_dir)
+            sys.exit(1)
+
+        with cuisine.cd(wxgigo_src_dir):
+            put(local_project_src_dir, self.host.option.wxgigo_home, use_sudo=True)
+
+    def setup_source_files_from_git(self):
         """
         Copy latest project source files from Github
 

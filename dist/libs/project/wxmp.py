@@ -27,15 +27,21 @@ import cuisine
 from libs.project import BaseProject
 
 class WXMPProject(BaseProject):
-    def __init__(self, host):
-        super(WXMPProject, self).__init__(host)
+    def __init__(self, host, options):
+        super(WXMPProject, self).__init__(host, options)
         self.project_name = 'wxmp'
+
+
 
     def configure(self):
         # wxgigo specific uwsgi config file
-        settings_file = os.path.join(self.get_project_home(), 'settings.py')
+        settings_file = os.path.join(self.home, 'settings.py')
         settings_content = cuisine.text_template(
             cuisine.file_local_read('conf/wxmp/settings.py'),
             dict(static_root=self.host.nginx_service.option.static_root)
         )
         cuisine.file_write(settings_file, settings_content)
+
+        cuisine.run('chown -R {0}:{1} {2}'.format(self.host.option.deploy_user,
+                                                      self.host.option.deploy_group,
+                                                      self.home))

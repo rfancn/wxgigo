@@ -39,12 +39,12 @@ class AppHost(BaseHost):
         self.role =  HostRole.APP
         self.option = AppHostOption(self)
 
-    def setup_service_celery(self):
+    def setup_service_celery(self, wxgigo_appserver_home):
         puts(green("Setup celery service"))
 
         cuisine.python_package_ensure('celery')
 
-        celery_service = CeleryService(self)
+        celery_service = CeleryService(self, wxgigo_appserver_home)
         if not celery_service:
             print 'Failed to setup celery service'
             sys.exit(1)
@@ -60,19 +60,19 @@ class AppHost(BaseHost):
         """
         puts(green("Setup app server project"))
 
-        proj = AppServerProject(self)
-        proj.setup_source_files()
-        proj.configure(options)
+        project = AppServerProject(self, options)
+        project.setup_source_files()
+        project.configure(options)
+
+        return project
 
     def setup(self, options):
-        self.setup_service_celery()
-        self.setup_project_appserver(options)
+        project_appserver = self.setup_project_appserver(options)
 
-    def post_deploy(self):
-        super(AppHost, self).post_deploy()
-        cuisine.run('chown -R {0}:{1} {2}' \
-                    .format(self.option.deploy_user, self.option.deploy_group,
-                            self.option.wxgigo_appserver_home))
+        # get wxgigo appserver project home as it needed by celery service
+        wxgigo_appserver_home =  project_appserver.home
+        self.setup_service_celery(wxgigo_appserver_home)
+
 
 
 

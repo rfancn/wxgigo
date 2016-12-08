@@ -25,6 +25,8 @@ import sys
 import os
 import socket
 from fabric.api import prompt
+from fabric.colors import green
+from fabric.utils import puts
 
 class BaseOption(object):
     def __init__(self, host):
@@ -52,8 +54,9 @@ class ServiceOption(BaseOption):
 class HostOption(BaseOption):
     def __init__(self, host):
         super(HostOption, self).__init__(host)
-        self.section = 'HOST_{0}'.format(host.role.upper())
+        puts(green("=== Check {0} deploy options ===".format(host.desc)))
 
+        self.section = 'HOST_{0}'.format(host.role.upper())
         self.ssh_host = \
             self.get_option('ssh_host',
                             "* What's SSH hostname/IP for {0}?".format(host.desc),

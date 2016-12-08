@@ -18,6 +18,7 @@ CELERYBEAT_SCHEDULE = {
 #######################
 # customized opttions #
 #######################
-PLUGINS_HOME='${wxgigo_plugins_home}'
+# wsgigo + project name + entity name
+PLUGINS_HOME='${wxgigo_appserver_plugins_home}'
 
 

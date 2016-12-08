@@ -23,9 +23,8 @@ OR OTHER DEALINGS IN THE SOFTWARE.
 """
 
 class BaseDeployment(object):
-    def __init__(self):
-        pass
-        #self.server_role = self.get_server_role()
+    def __init__(self, wxgigo_src_dir):
+        self.deploy_options = dict(wxgigo_src_dir=wxgigo_src_dir)
 
     def get_server_role(self):
         server_role = self.config.defaults().get('server_role', None)

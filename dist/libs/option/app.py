@@ -29,8 +29,8 @@ from fabric.utils import puts
 
 class AppHostOption(HostOption):
     def __init__(self, host):
-        puts(green("=== Check DB host deploy options ==="))
         super(AppHostOption, self).__init__(host)
-        self.wxgigo_appserver_home = os.path.join(self.wxgigo_home, 'appserver')
-        self.wxgigo_plugins_home = os.path.join(self.wxgigo_appserver_home, 'plugins')
-        self.celeryconfig_file = os.path.join(self.wxgigo_appserver_home, 'celeryconfig.py')
+
+
+
+

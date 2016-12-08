@@ -24,8 +24,8 @@ OR OTHER DEALINGS IN THE SOFTWARE.
 import importlib
 
 class DeploymentFactory(object):
-    def __init__(self):
-        pass
+    def __init__(self, wxgigo_src_dir):
+        self.wxgigo_src_dir = wxgigo_src_dir
 
     def get_server_role(self):
         server_role = self.config.defaults().get('server_role', None)
@@ -45,7 +45,7 @@ class DeploymentFactory(object):
         try:
             mod = importlib.import_module(module_path)
             cls = getattr(mod, class_name)
-            return cls()
+            return cls(self.wxgigo_src_dir)
         except Exception, e:
             print "DeploymentFactory.create() error: {0}!".format(e)
             raise e

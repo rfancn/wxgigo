@@ -22,14 +22,19 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 OR OTHER DEALINGS IN THE SOFTWARE.
 """
 import sys
+import os
 import cuisine
 from libs.host import HostDesc, HostRole
 from libs.project import BaseProject
 
 class AppServerProject(BaseProject):
-    def __init__(self, host):
-        super(AppServerProject, self).__init__(host)
+    def __init__(self, host, options):
+        super(AppServerProject, self).__init__(host, options)
         self.project_name = 'appserver'
+
+    @property
+    def plugins_home(self):
+        return os.path.join(self.home, 'plugins')
 
     def configure(self, options):
         dbhost_option = options.get(HostRole.DB, None)
@@ -40,7 +45,12 @@ class AppServerProject(BaseProject):
         celeryconfig_content = \
             cuisine.text_template(cuisine.file_local_read('conf/celery/celeryconfig.py'),
                                   dict(wxgigo_dbhost_ip=dbhost_option.ipaddr,
-                                       wxgigo_plugins_home = self.option.wxgigo_plugins_home))
+                                       wxgigo_appserver_plugins_home = self.plugins_home))
         # it need make sure the appserver home dir is created before write celeryconfig.py there
-        cuisine.dir_ensure(self.option.wxgigo_appserver_home)
-        cuisine.file_write(self.option.celeryconfig_file, celeryconfig_content)
+        cuisine.dir_ensure(self.home)
+        celeryconfig_file = os.path.join(self.home, 'celeryconfig.py')
+        cuisine.file_write(celeryconfig_file, celeryconfig_content)
+
+        cuisine.run('chown -R {0}:{1} {2}'.format(self.host.option.deploy_user,
+                                                      self.host.option.deploy_group,
+                                                      self.home))

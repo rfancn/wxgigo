@@ -21,42 +21,10 @@ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 OR OTHER DEALINGS IN THE SOFTWARE.
 """
-from fabric.colors import green, red
+import os
 
-from libs.deployment.base import BaseDeployment
-from libs.host import DBHost, WeixinHost, AppHost
+from libs.option import ServiceOption
 
-HOST_CLASSES = {
-    'db' : DBHost,
-    'app': AppHost,
-    'weixin': WeixinHost
-}
-
-class DefaultDeployment(BaseDeployment):
-    def __init__(self, wxgigo_src_dir):
-        super(DefaultDeployment, self).__init__(wxgigo_src_dir)
-
-    def deploy(self):
-        print green("##########################")
-        print green("# Begin to deploy wxgigo #")
-        print green("##########################")
-        print
-
-        deploy_hosts = []
-        for role, host_class in HOST_CLASSES.items():
-            host_instance = host_class()
-            deploy_hosts.append(host_instance)
-            self.deploy_options[role] = host_instance.option
-
-        # execute deploy with deploy options
-        for h in deploy_hosts:
-            h.deploy(self.deploy_options)
-
-
-
-
-
-
-
-
-
+class CeleryServiceOption(ServiceOption):
+    def __init__(self, host):
+        super(CeleryServiceOption, self).__init__(host, 'celery')

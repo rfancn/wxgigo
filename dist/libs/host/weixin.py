@@ -67,7 +67,7 @@ class WeixinHost(BaseHost):
         self.uwsgi_service.configure()
         self.uwsgi_service.enable()
 
-    def setup_project_wxmp(self):
+    def setup_project_wxmp(self, options):
         """
         Copy wxmp frontend sub project source files from Github
 
@@ -75,32 +75,16 @@ class WeixinHost(BaseHost):
         """
         puts(green("Setup wxmp project"))
 
-        proj = WXMPProject(self)
-        proj.setup_source_files()
-        proj.configure()
-
-    def setup_deploy_user(self):
-        puts(green('Setup deploy user for {0}'.format(self.desc)))
-        cuisine.user_ensure(self.option.deploy_user)
-
-    def setup_deploy_dir(self):
-        puts(green('Setup deploy dir for {0}'.format(self.desc)))
-
-        cuisine.dir_ensure(self.option.wxgigo_home,
-                           owner=self.option.deploy_user, group=self.option.deploy_group)
+        project = WXMPProject(self, options)
+        project.setup_source_files()
+        project.configure()
 
     def setup(self, options):
-        self.setup_deploy_user()
-        self.setup_deploy_dir()
         self.setup_service_nginx()
         self.setup_service_uwsgi()
-        self.setup_project_wxmp()
+        self.setup_project_wxmp(options)
 
-    def post_deploy(self):
-        super(WeixinHost, self).post_deploy()
-        cuisine.run('chown -R {0}:{1} {2}' \
-                    .format(self.option.deploy_user, self.option.deploy_group,
-                            self.option.wxgigo_wxmp_home))
+
 
 
 

@@ -22,17 +22,9 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 OR OTHER DEALINGS IN THE SOFTWARE.
 """
 from libs.option import HostOption
-from fabric.colors import green
-from fabric.utils import puts
+
 
 class DBHostOption(HostOption):
     def __init__(self, host):
-        puts(green("=== Check DB host deploy options ==="))
-
         super(DBHostOption, self).__init__(host)
-
-        self.db_user = \
-            self.get_option('db_user',
-                            "* What's DB user for {0}?".format(self.host.desc),
-                            default='guest')
 
