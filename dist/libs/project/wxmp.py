@@ -42,6 +42,18 @@ class WXMPProject(BaseProject):
         )
         cuisine.file_write(settings_file, settings_content)
 
+        # set the correct permission of django debug file
+        cuisine.file_ensure('/tmp/wxgigo-wxmp.log', owner='uwsgi', group='nginx')
+
+        # upload sqlite3 db file
+        remote_db_file = os.path.join(self.host.option.wxgigo_home, 'db.sqlite3')
+        cuisine.file_upload(remote_db_file, 'db.sqlite3')
+        cuisine.file_ensure(remote_db_file, owner='uwsgi', group='nginx')
+
+        # upload django manage.py file
+        remote_manage_file = os.path.join(self.host.option.wxgigo_home, 'manage.py')
+        cuisine.file_upload(remote_manage_file, 'manage.py')
+
         cuisine.run('chown -R {0}:{1} {2}'.format(self.host.option.deploy_user,
                                                       self.host.option.deploy_group,
                                                       self.home))

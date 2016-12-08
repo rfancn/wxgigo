@@ -115,7 +115,7 @@ LOGGING = {
         'file': {
              'level': 'DEBUG',
              'class': 'logging.FileHandler',
-             'filename': '/tmp/wxmp-debug.log',
+             'filename': '/tmp/wxgigo-wxmp.log',
              'formatter': 'verbose',
         },
     },
