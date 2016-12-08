@@ -19,6 +19,7 @@ install_basic_sys_packages()
         if [ $? -ne 0 ]; then
             fn_action "* Install basic system package:" yum install $YUM_OPTS $pkg
             if [ $? -ne 0 ]; then
+                echo "Error installing basic system packages!"
                 exit 1
             fi
         fi
@@ -41,7 +42,7 @@ upgrade_pip()
     fi
     fn_action "* Upgrade pip if needed: " $PIP_UPGRADE_CMD
     if [ $? -ne 0 ]; then
-        echo "pip upgradation failed!"
+        echo "Error upgrading pip!"
         exit 1
     fi
 }
@@ -59,6 +60,10 @@ install_basic_python_packages()
     #esac
 
     fn_action "* Install basic python packages: " $PIP_INSTALL_CMD $PIP_OPTS $PYTHON_PKGS
+    if [ $? -ne 0 ]; then
+        echo "Error installing basic python packages!"
+        exit 1
+    fi
 }
 
 
