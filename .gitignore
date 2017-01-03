@@ -14,4 +14,4 @@ celerybeat-schedule
 .env
 
 # bak files
-*.bak
+!*.bak
