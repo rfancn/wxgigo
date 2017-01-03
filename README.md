@@ -4,8 +4,8 @@ The framework for developing private Tencent Wechat public platform
 
 Currently it is under active development, no meaningful commit comments for all changes, as all may be reset in the future.
 
-Install
-=======
+Installation
+============
 1. Download and extract "dist" directory into any linux server
 2. Edit "dist/config.ini" as you needed or leave it empty
 3. Run `sh dist/setup.sh`
