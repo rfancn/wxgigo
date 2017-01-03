@@ -1,0 +1,72 @@
+{% extends "apps/member/base.html" %}
+
+{% block content %}
+
+<h3 style="text-align: center;   padding-top: 25px;">个人账号绑定</h3>
+<form class="weui_cells weui_cells_form" method="post">{% csrf_token %}
+    <div class="weui_cell {% if form.telephone.errors %}weui_cell_warn{% endif %}">
+        <div class="weui_cell_hd"><label class="weui_label">{{ form.telephone.label }}：</label></div>
+        <div class="weui_cell_bd weui_cell_primary">
+            <input name="{{ form.telephone.name }}" type="number" class="weui_input" placeholder="{{form.telephone.help_text}}"   pattern="[0-9]*" value="{{form.telephone.value}}">
+        </div>
+    </div>
+    <div class="weui_cell weui_vcode {% if form.vcode.errors %}weui_cell_warn{% endif %}">
+        <div class="weui_cell_hd"><label class="weui_label">{{ form.vcode.label }}：</label></div>
+        <div class="weui_cell_bd weui_cell_primary">
+            <input name="{{ form.vcode.name }}" type="number" class="weui_input" placeholder="{{form.vcode.help_text}}" pattern="[0-9]*" value="{{form.vcode.value}}">
+        </div>
+        <div class="weui_cell_ft">
+            <div class="weui_btn_area">
+                <button id="btn-vcode" type='button' class="weui_btn weui_btn_primary" style="margin: 5px;">
+                    <span style="font-size: 14px;">获取验证码</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id='tips' class="weui_cells_tips">
+        <ul>
+        {% for field in form %}
+          {% if field.errors %}
+            {% for error in field.errors %}
+              <li><a href="#id_{{ field.name }}" class="error">{{ error|escape }}</a></li>
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
+        </ul>
+    </div>
+    <div class="weui_btn_area">
+        <button type="submit" class="weui_btn weui_btn_primary">确定</button>
+    </div>
+    <input type="hidden" name="open_id" value="{{ open_id }}" />
+</form>
+{% endblock %}
+
+{% block myjs %}
+<script type="application/javascript" src="/static/core/js/zepto.min.js"></script>
+<script>
+var wait_seconds = 10;
+
+function reset(){
+    wait_seconds = 10;
+    $('#btn-vcode span').text('获取验证码')
+    $('#btn-vcode').removeClass('weui_btn_disabled');
+    $('#tips').hide().text();
+}
+
+function countDown(){
+    $('#tips').text(wait_seconds + "秒后可以重发")
+    wait_seconds--;
+    if(wait_seconds > 0){
+        setTimeout(countDown, 1000);
+    }else{
+        reset();
+    }
+};
+
+$('#btn-vcode').bind('click', function(e){
+    $('#btn-vcode').addClass('weui_btn_disabled');
+    setTimeout(countDown, 1000);
+});
+
+</script>
+{% endblock %}

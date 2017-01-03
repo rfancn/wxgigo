@@ -1,0 +1,93 @@
+import logging
+import os
+
+from django.template import loader, Context
+from django.views.generic import UpdateView, DetailView
+from django.core import serializers
+
+from web.admin.config.models import WXMPConfig
+from web.admin.config.forms import ConfigForm
+import settings
+
+from celery import Celery
+from celery.exceptions import *
+
+logger = logging.getLogger(__name__)
+
+CELERY_APP = Celery()
+CELERY_APP.config_from_object('django.conf:settings')
+CELERY_RESULT_TIMEOUT = 5
+
+
+class ConfigDetailView(DetailView):
+    model = WXMPConfig
+    template_name = "detail.html"
+
+    def get_object(self, queryset=None):
+        try:
+            return WXMPConfig.objects.get(pk=1)
+        except:
+            return None
+
+class ConfigUpdateView(UpdateView):
+    model = WXMPConfig
+    template_name = "edit.html"
+    success_url = "/admin/config/"
+    form_class = ConfigForm
+
+    def get_object(self, queryset=None):
+        object, created = WXMPConfig.objects.get_or_create(pk=1)
+        return object
+
+    def save_config_as_file(self):
+        config_file = "config.py"
+        config_file_abspath = os.path.join(settings.BASE_DIR, "web/web/core/{0}".format(config_file))
+        config_file_template = "{0}.tmpl".format(config_file)
+
+        try:
+            with open(config_file_abspath , "w") as f:
+                t = loader.get_template(config_file_template)
+                content = t.render(Context({'config':self.object}))
+                f.write(content)
+        except Exception, e:
+            raise e
+
+    def save_to_celery(self):
+        """
+        Save Weixin Media Platform configuration to Celery server side
+        """
+        global CELERY_APP
+        try:
+            result = CELERY_APP.send_task('wxmp.config',
+                                          (self.object,),
+                                          retry=False)
+            response = result.get(CELERY_RESULT_TIMEOUT)
+        except TimeoutError:
+            logger.error("Failed to get Celery result in {0}".format(CELERY_RESULT_TIMEOUT))
+            return ""
+        except Exception,e:
+            logger.error("Failed to communicate with Celery: {0}".format(e))
+            return ""
+
+        if response != "OK":
+            raise Exception("Failed to save configuration to Celery server.")
+
+        logger.debug("Celery Server returns: {0}".format(response))
+        return response
+
+
+    def form_valid(self, form):
+        """
+        Override form_valid() to save config file before save it to db
+        :param form:
+        :return: HttpResponse
+        """
+        self.save_config_as_file()
+        return super(ConfigUpdateView, self).form_valid(form)
+
+
+
+
+
+
+

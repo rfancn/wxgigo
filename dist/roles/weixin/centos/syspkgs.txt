@@ -1,0 +1,2 @@
+epel-release
+python2-pip

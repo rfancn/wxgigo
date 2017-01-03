@@ -1,0 +1,133 @@
+from django.db import models
+
+class PositiveBigIntegerField(models.BigIntegerField):
+    description = "Positive Big Integer"
+
+    def formfield(self, **kwargs):
+        defaults = {'min_value': 0,
+                    'max_value': models.BigIntegerField.MAX_BIGINT * 2 - 1}
+        defaults.update(kwargs)
+        return super(PositiveBigIntegerField, self).formfield(**defaults)
+
+    def db_type(self, connection):
+        if 'mysql' in connection.__class__.__module__:
+            return 'bigint UNSIGNED'
+        return super(PositiveBigIntegerField, self).db_type(connection)
+
+# Create your models here.
+class DBRecvMsg(models.Model):
+    msg_id = PositiveBigIntegerField(primary_key=True)
+    msg_type = models.CharField(max_length=32)
+    to_username = models.CharField(max_length=64)
+    from_username = models.CharField(max_length=64)
+    create_time = models.DateTimeField()
+    status = models.CharField(max_length=16, default="new")
+
+    class Meta:
+        db_table = "wxmp_recv_msg"
+
+class DBTextMsg(models.Model):
+    receive = models.ForeignKey(DBRecvMsg)
+    content = models.CharField(max_length=2047)
+
+    class Meta:
+        db_table = "msg_text"
+
+class DBPicMsg(models.Model):
+    receive = models.ForeignKey(DBRecvMsg)
+    pic_url = models.CharField(max_length=1024)
+    media_id = models.CharField(max_length=128)
+
+    class Meta:
+        db_table = "msg_pic"
+
+class DBVoiceMsg(models.Model):
+    receive = models.ForeignKey(DBRecvMsg)
+    media_id = models.CharField(max_length=128)
+    format = models.CharField(max_length=32)
+    recognition = models.CharField(max_length=1024)
+
+    class Meta:
+        db_table = "msg_voice"
+
+class DBVideoMsg(models.Model):
+    receive = models.ForeignKey(DBRecvMsg)
+    media_id = models.CharField(max_length=128)
+    thumbmedia_id = models.CharField(max_length=128)
+
+    class Meta:
+        db_table = "msg_video"
+
+class DBShortvideoMsg(models.Model):
+    receive = models.ForeignKey(DBRecvMsg)
+    media_id = models.CharField(max_length=128)
+    thumbmedia_id = models.CharField(max_length=128)
+
+    class Meta:
+        db_table = "msg_shortvideo"
+
+class DBLocationMsg(models.Model):
+    receive = models.ForeignKey(DBRecvMsg)
+    location_x = models.FloatField()
+    location_y = models.FloatField()
+    scale  = models.IntegerField()
+    label = models.CharField(max_length=1024)
+
+    class Meta:
+        db_table = "msg_location"
+
+class DBLinkMsg(models.Model):
+    receive = models.ForeignKey(DBRecvMsg)
+    title = models.CharField(max_length=1024)
+    description = models.CharField(max_length=2048)
+    url = models.URLField()
+
+    class Meta:
+        db_table = "msg_link"
+
+class DBRecvEvent(models.Model):
+    create_time = models.DateTimeField()
+    event = models.CharField(max_length=32)
+    to_username = models.CharField(max_length=64)
+    from_username = models.CharField(max_length=64)
+    status = models.CharField(max_length=16, default="new")
+
+    class Meta:
+        db_table = "wxmp_recv_event"
+
+class DBFollowEvent(models.Model):
+    receive = models.ForeignKey(DBRecvEvent)
+    event = models.CharField(max_length=32)
+
+    class Meta:
+        db_table = "event_follow"
+
+class DBScanEvent(models.Model):
+    receive = models.ForeignKey(DBRecvEvent)
+    event_key = models.CharField(max_length=128)
+    ticket = models.CharField(max_length=256)
+
+    class Meta:
+        db_table = "event_scan"
+
+class DBLocationEvent(models.Model):
+    receive = models.ForeignKey(DBRecvEvent)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    precision = models.FloatField()
+
+    class Meta:
+        db_table = "event_location"
+
+class DBMenuEvent(models.Model):
+    receive = models.ForeignKey(DBRecvEvent)
+    event_key = models.CharField(max_length=128)
+
+    class Meta:
+        db_table = "event_menu"
+
+class DBReplyMsg(models.Model):
+    class Meta:
+        db_table = "wxmp_reply_msg"
+
+

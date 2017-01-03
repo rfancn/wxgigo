@@ -1,0 +1,73 @@
+{% extends "base_with_sidebar.html" %}
+
+{% block page-content %}
+<table class="table table-striped table-hover">
+    <thead>
+         <th>#</th>
+         <th>Plugin Name</th>
+         <th>Plugin Description</th>
+    </thead>
+    <tbody>
+        {% for plugin in plugin_list %}
+        <tr>
+            <th scope="row">{{　forloop.counter }}</th>
+            <td><b>{{ plugin.name }}</b>
+                <br/>
+                {% if plugin.enabled %}
+                <a class="action" name="{{ plugin.uuid }}" href="javascript:void(0);">Deactive</a>
+                {% else %}
+                <a class="action" name="{{ plugin.uuid }}" href="javascript:void(0);">Active</a>
+                {% endif %}
+            </td>
+            <td>{{ plugin.description }}<br/>Version: {{ plugin.version }} | By {{ plugin.author }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block enabled_plugins %}
+<ul>
+    <li>1</li>
+</ul>
+{% endblock %}
+
+{% block myjs %}
+<script >
+
+
+
+$('a.action').click(function(e){
+    e.preventDefault();
+
+    var action_element  = $(this);
+    var plugin_uuid = $(this).attr("name");
+    var action_name = $(this).text().toLowerCase();
+    var action_url = action_name + "/" + plugin_uuid + "/";
+
+    $.ajax({
+        url: action_url,
+        method: 'POST',
+        dataType: 'json',
+        success: function(data, status, xhr){
+            console.log(data);
+            if(data.status == "success"){
+                console.log("really ok!");
+                location.reload(true);
+            }else if(data.status == "error"){
+                console.log("something bad happened!");
+            }else{
+                console.log("invalid server message!");
+            }
+        },
+        error: function(xhr, status, error){
+            console.log("error");
+        },
+        complete: function(xhr, status){
+            console.log("complete with status: " + status);
+            ajax_loader.hide();
+        }
+    });
+});
+</script>
+{% endblock %}

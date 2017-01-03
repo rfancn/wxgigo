@@ -1,0 +1,22 @@
+<script id="plugin-detail-template" type="x-tmpl-dot">
+{% verbatim %}
+{{ for(var i=0, len=it.length; i<len; i++){ }}
+<tr>
+    <th scope="row">{{=i+1}}</th>
+    <td>
+        <b>{{=it[i].name }}</b>
+        <br/>
+        {{? it[i].enabled }}
+            <a class="action" name="{{=it[i].name}}" href="javascript:void(0);">Deactive</a>
+            {{? it[i].has_settings }}
+            | <a class="action" name="{{=it[i].name}}" href="javascript:void(0);">Settings</a>
+            {{?}}
+        {{??}}
+            <a class="action" name="{{=it[i].name}}" href="javascript:void(0);">Active</a>
+        {{?}}
+    </td>
+    <td>{{=it[i].description}}<br/>Version: {{=it[i].version}} | By {{=it[i].author}}</td>
+</tr>
+{{ } }}
+{% endverbatim %}
+</script>

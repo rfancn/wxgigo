@@ -1,0 +1,25 @@
+<li class="sidebar-brand">
+    <a href="#"><span class="glyphicon glyphicon-th-list"></span> Overview </a>
+</li>
+<li>
+    <a href="/admin/dashboard/">Dashboard</a>
+</li>
+<li>
+    <a href="/admin/config">Configuration</a>
+</li>
+<li>
+    <a href="/admin/test">Menu</a>
+</li>
+<li>
+    <a href="/admin/plugin">Plugin</a>
+    <ul>
+    {% for p in plugin_list %}
+        {% if p.enabled %}
+        <li><a href="config/{{ p.uuid }}/">{{ p.name }}</a></li>
+        {% endif %}
+    {% endfor %}
+    </ul>
+</li>
+<li>
+    <a href="/admin/about">About</a>
+</li>

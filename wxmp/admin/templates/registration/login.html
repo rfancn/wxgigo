@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if next %}
+        <div class="alert alert-warning alert-dismissible fade in" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <strong>提醒:</strong>
+             {% if user.is_authenticated %}
+                 你当前账户无权限访问此页面，请换其他有效账户登录继续访问！
+             {% else %}
+                请登录访问此页面!
+             {% endif %}
+        </div>
+    {% endif %}
+
+<div class="panel panel-default center-block" style="margin-top:60px; width: 360px;">
+    <div class="panel-heading">登录页面</div>
+    <form method="post" action="{% url 'django.contrib.auth.views.login' %}" class="form-horizontal">{% csrf_token %}
+    <div class="panel-body">
+        {% if form.errors %}
+            <div class="alert alert-danger alert-dismissible fade in" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <strong>提醒：</strong>用户名或者密码错误，请重试！
+        </div>
+        {% endif %}
+
+        {% for field in form %}
+         <div class="form-group {% if field.errors %}has-error{% endif %}">
+            <label class="control-label col-sm-3" for="id_{{ field.name }}">{{ field.label }}</label>
+            <div class="col-sm-9">
+                <input type="{% if field.name == "password" %}password{% else %}text{% endif %}"
+                       class="form-control" name="{{ field.name }}"   id="id_{{ field.name }}"  value="{{ field.value|default:'' }}" autofocus>
+            </div>
+         </div>
+        {% endfor %}
+
+    </div><!-- panel-body -->
+    <div class="panel-footer">
+        <a href="{% url 'password_reset' %}" class="pull-right">Lost password?</a>
+        <input type="submit" value="login" class="btn btn-primary" />
+        <input type="hidden" name="next" value="{{ next }}" />
+    </div>
+    </form>
+</div>
+{% endblock %}

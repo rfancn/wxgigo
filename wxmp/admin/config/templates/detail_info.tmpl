@@ -1,0 +1,20 @@
+<script id="template" type="x-tmpl-dot">
+{% verbatim %}
+<h5>开发者ID</h5>
+<dl class="dl-horizontal">
+    <dt>微信号：</dt><dd>{{=it.WX_ID}}</dd>
+    <dt>原始ID：</dt><dd>{{=it.WX_ORIGINAL_ID}}</dd>
+</dl><br/>
+<h5>开发者ID</h5>
+<dl class="dl-horizontal">
+    <dt>AppID(应用ID)：</dt><dd>{{=it.APP_ID}}</dd>
+    <dt>AppSecret(应用密钥)：</dt><dd>{{=it.APP_KEY}}</dd>
+</dl><br/>
+<h5>服务器配置</h5>
+<dl class="dl-horizontal">
+    <dt>Token(令牌)：</dt><dd>{{=it.TOKEN}}</dd>
+    <dt>EncodingAESKey(消息加解密密钥)：</dt><dd>{{=it.ENCODING_AES_KEY}}</dd>
+    <dt>消息加解密方式：</dt><dd>{{=it.MSG_ENCRYPT_METHOD}}</dd>
+</dl>
+{% endverbatim %}
+</script>

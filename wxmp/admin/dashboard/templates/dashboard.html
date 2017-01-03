@@ -1,0 +1,10 @@
+{% extends "base_with_sidebar.html" %}
+
+{% block page-content %}
+    {% if not object %}
+        <p>error is:</p>
+        {{ celery_error }}
+    {% else %}
+        {{ object }}
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,5 @@
+class WXMPLimits(object):
+    ACCESS_TOKEN_RETRIEVE = 2000
+    MENU_CREATE = 1000
+    MENU_QUERY = 10000
+    MENU_DELETE = 1000

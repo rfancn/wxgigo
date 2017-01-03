@@ -1,0 +1,71 @@
+{% extends "base_with_sidebar.html" %}
+
+{% block mycss %}
+<link href="//cdn.bootcss.com/bootstrap-treeview/1.2.0/bootstrap-treeview.min.css" rel="stylesheet">
+<style>
+.bg-menu-header{
+    width: 540px;
+    height: 102px;
+    background-image: url("/static/images/menu_bg_header.jpg");
+    background-size: 100% 100%;
+}
+.bg-menu-body{
+    width: 540px;
+    height: 300px;
+    background-color: #EBEBEB;
+}
+.bg-menu-footer{
+    width: 540px;
+    height: 74px;
+    background-image: url("/static/images/menu_bg_menu3.jpg");
+    background-size: 100% 100%;
+}
+.wx-dropdown-menu{
+    left: -20px;
+    min-width: 138px;
+}
+</style>
+{% endblock %}
+
+{% block page-content %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <span>公众号菜单编辑配置</span>
+    </div>
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-md-5" style="height: 476px; border-right: #ddd 1px solid;">
+                <div id="menuTree"></div>
+                {% include "menu/topmenu_add_form.html" %}
+                {% include "menu/childmenu_add_form.html" %}
+            </div>
+            <div class="col-md-7">
+                {% include "menu/menu_preview.html" %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block myjs %}
+<script src="//cdn.bootcss.com/bootstrap-treeview/1.2.0/bootstrap-treeview.min.js"></script>
+<script>
+    var tree_data = [
+            { text: "一级菜单",
+                nodes: [
+                    { text: "Child 1"},
+                    {text: "Child 2"}]
+            },
+            { text: "一级菜单" },
+            { text: "一级菜单" },
+    ];
+
+    $('#menuTree').treeview({
+        data: tree_data
+
+    }).on('nodeSelected', function(event, node) {
+		console.log(node);
+	});
+
+</script>
+{% endblock %}

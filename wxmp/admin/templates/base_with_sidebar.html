@@ -1,0 +1,108 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="ryan.fan">
+    <title>{% block mytitle %}{% endblock %}</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="{% static 'core/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'core/css/sidebar.css' %}" rel="stylesheet">
+    <style>
+        body{
+            min-height: 2000px;
+            padding-top: 56px;
+        }
+        ajax-loader {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            margin: auto;
+        }
+    </style>
+    {% block mycss %}{% endblock %}
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="{% static 'core/js/html5shiv.js' %}"></script>
+    <script src="{% static 'core/js/respond.min.js' %}"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <nav class="navbar navbar-default navbar-fixed-top no-margin">
+    <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header fixed-brand">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse">
+                      <span class="glyphicon glyphicon-th-large" aria-hidden="true"></span>
+                    </button>
+                    <a class="navbar-brand" href="#"><i class="fa fa-rocket fa-4"></i>GXG Weixin Media Platform</a>
+                </div><!-- navbar-header-->
+
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li class="active" >
+                            <button class="navbar-toggle collapse in" data-toggle="collapse" id="menu-toggle">
+                                <span class="glyphicon glyphicon-th-large" aria-hidden="true"></span>
+                            </button>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                          <li class="dropdown">
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Hello,&nbsp{{ user.get_username }}&nbsp;
+                              <span class="caret"></span>
+                          </a>
+                          <ul class="dropdown-menu">
+                            <li><a href="#">Profile</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="/accounts/logout/">Logout</a></li>
+                          </ul>
+                        </li>
+                    </ul>
+                </div><!-- bs-forward2wp-navbar-collapse-1 -->
+    </nav>
+
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                {% include "sidebar.html" with plugin_list=plugin_list %}
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                {% block page-content %}{% endblock %}
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+    </div>
+
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="{% static 'core/js/jquery.min.js' %}"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="{% static 'core/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'core/js/ajax.js' %}"></script>
+
+    <!-- Menu Toggle Script -->
+    <script>
+        $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+
+    </script>
+
+    <!-- customized javascript -->
+    {% block myjs %}{% endblock %}
+
+</body>
+
+</html>

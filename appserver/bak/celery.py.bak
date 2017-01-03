@@ -1,0 +1,55 @@
+#!/usr/bin/env python
+# coding=utf-8
+"""
+The MIT License (MIT)
+
+Copyright (c) 2010-2015, Ryan Fan <reg_info@126.com>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+"""
+from __future__ import absolute_import
+
+import os
+from os.path import dirname, realpath
+from celery import Celery
+
+app = Celery()
+app.config_from_object('celeryconfig')
+
+# Assume we invokve celery.py as following
+# $ cd <consumer dir>
+# $ celery worker -A libs.celery
+PROBE_DIR = dirname(dirname(realpath(__file__)))
+
+# find all packages which contain tasks.py
+pkgs = []
+for root, dirs, files in os.walk(PROBE_DIR):
+    for f in files:
+        if f.endswith("tasks.py"):
+            parent_dirs = root.split(os.sep)
+            base_dirs = PROBE_DIR.split(os.sep)
+            dirs = [ i for i in parent_dirs if not i in base_dirs or base_dirs.remove(i) ]
+            pkg = ".".join(dirs)
+            if pkg not in pkgs:
+                pkgs.append(pkg)
+
+
+print pkgs
+# it must set force to be True, otherwise it cannot be found and loaded successfully
+app.autodiscover_tasks(pkgs, force=True)

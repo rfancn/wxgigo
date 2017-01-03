@@ -1,0 +1,101 @@
+{% extends "apps/member/base.html" %}
+
+{% block mycss %}
+<style>
+    .text-desc{
+        line-height: 1.4;
+        font-size: 14px;
+        color: #080808;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row" style="padding: 20px 0; ">
+    <div class="col-xs-6">
+        <div style="text-align: center;">
+                <img id="my-headimg" class="img-rounded" style="height:86px;" src="{{ member.headimg_url }}"/>
+                <div>
+                    <p id="my-nickname" class="text-desc">{{ member.nickname }}</p>
+                </div>
+        </div>
+    </div>
+    <div class="col-xs-6">
+        <div style="padding-bottom: 5px;">
+            <p>推广金额</p>
+            <p style="color: red;">¥ 88888</p>
+        </div>
+        <div>
+            <p>总佣金</p>
+            <p style="color: red;">¥ 888</p>
+        </div>
+    </div>
+</div>
+
+<div class="weui_cells_title">
+    个人中心 - <span>{% if member %} 已绑定：({{ member.telephone }}){% else %}未绑定{% endif %}</span>
+</div>
+<div class="weui_cells weui_cells_access">
+    <a id="my-qrcode" class="weui_cell" href="{% if member %}/apps/member/myqrcode/?ticket={{ member.ticket }}{% else %}javascript:void(0);{% endif %}">
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>我的名片</p>
+        </div>
+        <div class="weui_cell_ft"></div>
+    </a>
+    <a id="my-team" class="weui_cell" href="{% if member %}/apps/member/mygroup/{% else %}javascript:void(0);{% endif %}">
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>我的队伍</p>
+        </div>
+        <div class="weui_cell_ft"></div>
+    </a>
+    <a id="my-promotion" class="weui_cell" href="{% if member %}/apps/member/mypromotion/{% else %}javascript:void(0);{% endif %}">
+        <div class="weui_cell_bd weui_cell_primary">
+            <p>我的战果</p>
+        </div>
+        <div class="weui_cell_ft"></div>
+    </a>
+</div>
+
+{% if not member %}
+    {% include "apps/member/loading.html" %}
+    {% include "apps/member/dialog-ok.html" with dialog_title="友情提示" dialog_body="当前用户未绑定，无法显示推广信息" %}
+{% endif %}
+
+{% endblock %}
+
+{% block myjs %}
+{% if not member %}
+<script type="application/javascript" src="/static/core/js/zepto.min.js"></script>
+<script>
+$(document).ready(function(){
+    $.ajax({
+        url: '/core/user/basic_info/?open_id={{open_id}}',
+        method: 'GET',
+        beforeSend: function(xhr, setting){
+             $('#loadingToast').show();
+        },
+        success: function(data, status, xhr){
+            console.log(data);
+            $("#my-headimg").attr("src",data.headimgurl);
+            $('#my-nickname').text(data.nickname);
+        },
+        error: function(xhr, status, error){
+            console.log("error");
+        },
+        complete: function(xhr, status){
+            console.log("complete with status: " + status);
+            $('#loadingToast').hide();
+        }
+    });
+});
+
+// if member is not binded, show dialog
+$('#my-qrcode, #my-team, #my-promotion').bind('click', function(){
+    $('#dialog-ok').show().on('click', '.weui_btn_dialog', function () {
+        $('#dialog-ok').off('click').hide();
+    });
+ });
+</script>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,3 @@
+[DEFAULT]
+plugins_dir=${wxgigo_plugin_home}
+
