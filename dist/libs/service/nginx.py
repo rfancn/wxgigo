@@ -52,9 +52,9 @@ class NginxService(object):
         conf_content = cuisine.text_template(cuisine.file_local_read('conf/nginx.conf'),
                                              dict(server_port=self.option.server_port,
                                                   server_name=self.option.server_name,
-                                                  static_dir=self.option.static_dir))
+                                                  static_root=self.option.static_root))
         cuisine.file_write(conf_file, conf_content, owner='nginx', group='nginx')
-        cuisine.dir_ensure(self.option.static_dir, owner='nginx', group='nginx')
+        cuisine.dir_ensure(self.option.static_root, owner='nginx', group='nginx')
 
         link_file = os.path.join(NGINX_CONF_DIR, WXGIGO_NGINX_CONF_FILENAME)
         if cuisine.file_exists(link_file):

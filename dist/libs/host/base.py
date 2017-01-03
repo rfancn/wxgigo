@@ -21,8 +21,8 @@ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 OR OTHER DEALINGS IN THE SOFTWARE.
 """
-
 import os
+import sys
 import ConfigParser
 
 import fabric
@@ -128,6 +128,8 @@ class BaseHost(object):
                 cmd_list = [ line.replace("\r","").replace("\n", "") for line in f.readlines() ]
                 for cmd in cmd_list:
                     cuisine.run(cmd)
+
+
 
     def pre_deploy(self):
         # setup env

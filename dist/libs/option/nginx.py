@@ -37,6 +37,6 @@ class NginxServiceOption(ServiceOption):
                                            "Please input http server port for {0}".format(host.desc),
                                            default=80, validate=int)
 
-        self.static_dir = self.get_option('static_dir',
+        self.static_root = self.get_option('static_root',
                                           "Please input static dir for {0}".format(host.desc),
                                           default=os.path.join(host.option.wxgigo_home, 'static'))

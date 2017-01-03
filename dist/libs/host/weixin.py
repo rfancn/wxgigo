@@ -31,6 +31,7 @@ from fabric.utils import puts
 from libs.host.base import BaseHost, HostDesc, HostRole
 from libs.service import NginxService, UwsgiService
 from libs.option import WeixinHostOption
+from libs.project import WXMPProject
 
 class WeixinHost(BaseHost):
     def __init__(self):
@@ -39,51 +40,44 @@ class WeixinHost(BaseHost):
         self.role = HostRole.WEIXIN
         self.option = WeixinHostOption(self)
 
-    def setup_nginx(self):
+    def setup_service_nginx(self):
         puts(green("Setup nginx service"))
         # make sure nginx package installed
         cuisine.package_ensure('nginx')
 
-        nginx_service = NginxService(self)
-        if not nginx_service:
+        self.nginx_service = NginxService(self)
+        if not self.nginx_service:
             print 'Failed to setup nginx because of invalid info'
             sys.exit(1)
 
-        nginx_service.configure()
-        nginx_service.enable()
+        self.nginx_service.configure()
+        self.nginx_service.enable()
 
-    def setup_uwsgi(self):
+    def setup_service_uwsgi(self):
         puts(green("Setup uwsgi service"))
         # make sure nginx package installed
         cuisine.package_ensure('uwsgi')
         cuisine.package_ensure('uwsgi-plugin-python')
 
-        uwsgi_service = UwsgiService(self)
-        if not uwsgi_service:
+        self.uwsgi_service = UwsgiService(self)
+        if not self.uwsgi_service:
             print 'Failed to setup uwsgi because of invalid info'
             sys.exit(1)
 
-        uwsgi_service.configure()
-        uwsgi_service.enable()
+        self.uwsgi_service.configure()
+        self.uwsgi_service.enable()
 
-    def setup_weixin_django_project(self):
-        puts(green("Setup wxmp django project"))
+    def setup_project_wxmp(self):
+        """
+        Copy wxmp frontend sub project source files from Github
 
-        cuisine.package_ensure('unzip')
+        :return:
+        """
+        puts(green("Setup wxmp project"))
 
-        temp_dir = cuisine.run('mktemp -d')
-        if os.path.exists(temp_dir):
-            with cuisine.cd(temp_dir):
-                #  github zip file URL
-                GIT_ARCHIVE_URL = 'https://github.com/rfancn/wxgigo/archive/master.zip'
-                # download archive file
-                cuisine.run('curl -sOL {0}'.format(GIT_ARCHIVE_URL))
-                # unzip it
-                cuisine.run('unzip master.zip')
-                # and copy wxmp source files
-                cuisine.run('cp -fr wxgigo-master/wxmp {0}'.format(self.option.wxgigo_home))
-
-            cuisine.run('rm -fr {0}'.format(temp_dir))
+        proj = WXMPProject(self)
+        proj.setup_source_files()
+        proj.configure()
 
     def setup_deploy_user(self):
         puts(green('Setup deploy user for {0}'.format(self.desc)))
@@ -98,9 +92,15 @@ class WeixinHost(BaseHost):
     def setup(self, options):
         self.setup_deploy_user()
         self.setup_deploy_dir()
-        self.setup_nginx()
-        self.setup_uwsgi()
-        #self.setup_weixin_django_project()
+        self.setup_service_nginx()
+        self.setup_service_uwsgi()
+        self.setup_project_wxmp()
+
+    def post_deploy(self):
+        super(WeixinHost, self).post_deploy()
+        cuisine.run('chown -R {0}:{1} {2}' \
+                    .format(self.option.deploy_user, self.option.deploy_group,
+                            self.option.wxgigo_wxmp_home))
 
 
 

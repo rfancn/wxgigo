@@ -22,10 +22,37 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 OR OTHER DEALINGS IN THE SOFTWARE.
 """
 import os
-from libs.option import HostOption
+import cuisine
 
-class WeixinHostOption(HostOption):
+GIT_ARCHIVE_URL = 'https://github.com/rfancn/wxgigo/archive/master.zip'
+
+class BaseProject(object):
     def __init__(self, host):
-        super(WeixinHostOption, self).__init__(host)
-        self.wxgigo_wxmp_home = os.path.join(self.wxgigo_home, 'wxmp')
+        self.host = host
 
+    def get_project_home(self):
+        return os.path.join(self.host.option.wxgigo_home, self.project_name)
+
+    def setup_source_files(self):
+        """
+        Copy latest project source files from Github
+
+        :param sub_project:
+        :return:
+        """
+        cuisine.package_ensure('unzip')
+
+        temp_dir = cuisine.run('mktemp -d')
+        cuisine.dir_ensure(temp_dir)
+        cuisine.dir_ensure(self.host.option.wxgigo_home)
+
+        with cuisine.cd(temp_dir):
+            # download archive file
+            cuisine.run('curl -OL {0}'.format(GIT_ARCHIVE_URL))
+            # unzip it
+            cuisine.run('unzip master.zip')
+            # and copy source files
+            cp_src = os.path.join('wxgigo-master', self.project_name)
+            cuisine.run('cp -fr {0} {1}'.format(cp_src, self.host.option.wxgigo_home))
+
+        cuisine.run('rm -fr {0}'.format(temp_dir))

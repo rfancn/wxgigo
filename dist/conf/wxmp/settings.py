@@ -25,7 +25,7 @@ SECRET_KEY = 'e0c)ts62$320dm$*f+x4cb!f2)w)_1j6n16z_6x!uzz@a^6*6^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -83,7 +83,8 @@ WSGI_APPLICATION = 'wxmp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': '/tmp/db.sqlite3',
     }
 }
 
@@ -99,7 +100,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
-
+##############################################################
+STATIC_ROOT = '${static_dir}'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

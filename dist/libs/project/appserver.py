@@ -21,11 +21,26 @@ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 OR OTHER DEALINGS IN THE SOFTWARE.
 """
-import os
-from libs.option import HostOption
+import sys
+import cuisine
+from libs.host import HostDesc, HostRole
+from libs.project import BaseProject
 
-class WeixinHostOption(HostOption):
+class AppServerProject(BaseProject):
     def __init__(self, host):
-        super(WeixinHostOption, self).__init__(host)
-        self.wxgigo_wxmp_home = os.path.join(self.wxgigo_home, 'wxmp')
+        super(AppServerProject, self).__init__(host)
+        self.project_name = 'appserver'
 
+    def configure(self, options):
+        dbhost_option = options.get(HostRole.DB, None)
+        if not dbhost_option:
+            print "Error get DB Host option while setup_celery_app()"
+            sys.exit(1)
+
+        celeryconfig_content = \
+            cuisine.text_template(cuisine.file_local_read('conf/celery/celeryconfig.py'),
+                                  dict(wxgigo_dbhost_ip=dbhost_option.ipaddr,
+                                       wxgigo_plugins_home = self.option.wxgigo_plugins_home))
+        # it need make sure the appserver home dir is created before write celeryconfig.py there
+        cuisine.dir_ensure(self.option.wxgigo_appserver_home)
+        cuisine.file_write(self.option.celeryconfig_file, celeryconfig_content)

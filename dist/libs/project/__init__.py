@@ -21,11 +21,7 @@ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 OR OTHER DEALINGS IN THE SOFTWARE.
 """
-import os
-from libs.option import HostOption
-
-class WeixinHostOption(HostOption):
-    def __init__(self, host):
-        super(WeixinHostOption, self).__init__(host)
-        self.wxgigo_wxmp_home = os.path.join(self.wxgigo_home, 'wxmp')
-
+__all__ = ['base', 'wxmp', 'appserver']
+from base import BaseProject
+from wxmp import WXMPProject
+from appserver import AppServerProject

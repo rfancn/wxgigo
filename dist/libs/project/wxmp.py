@@ -22,10 +22,20 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 OR OTHER DEALINGS IN THE SOFTWARE.
 """
 import os
-from libs.option import HostOption
+import cuisine
 
-class WeixinHostOption(HostOption):
+from libs.project import BaseProject
+
+class WXMPProject(BaseProject):
     def __init__(self, host):
-        super(WeixinHostOption, self).__init__(host)
-        self.wxgigo_wxmp_home = os.path.join(self.wxgigo_home, 'wxmp')
+        super(WXMPProject, self).__init__(host)
+        self.project_name = 'wxmp'
 
+    def configure(self):
+        # wxgigo specific uwsgi config file
+        settings_file = os.path.join(self.get_project_home(), 'settings.py')
+        settings_content = cuisine.text_template(
+            cuisine.file_local_read('conf/wxmp/settings.py'),
+            dict(static_root=self.host.nginx_service.option.static_root)
+        )
+        cuisine.file_write(settings_file, settings_content)

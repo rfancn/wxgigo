@@ -30,6 +30,7 @@ from fabric.utils import puts
 from libs.host import BaseHost, HostDesc, HostRole
 from libs.option import AppHostOption
 from libs.service import CeleryService
+from libs.project import AppServerProject
 
 class AppHost(BaseHost):
     def __init__(self):
@@ -38,7 +39,7 @@ class AppHost(BaseHost):
         self.role =  HostRole.APP
         self.option = AppHostOption(self)
 
-    def setup_celery_service(self):
+    def setup_service_celery(self):
         puts(green("Setup celery service"))
 
         cuisine.python_package_ensure('celery')
@@ -51,21 +52,29 @@ class AppHost(BaseHost):
         celery_service.configure()
         celery_service.enable()
 
-    def setup_celeryapp(self, options):
-        dbhost_option = options.get(HostRole.DB, None)
-        if not dbhost_option:
-            print "Error get DB Host option while setup_celery_app()"
-            sys.exit(1)
+    def setup_project_appserver(self, options):
+        """
+        Copy app server backend sub project source files from Github
 
-        celeryconfig_content = \
-            cuisine.text_template(cuisine.file_local_read('conf/celery/celeryconfig.py'),
-                                  dict(wxgigo_dbhost_ip=dbhost_option.ipaddr,
-                                       wxgigo_plugins_home = self.option.wxgigo_plugins_home))
-        cuisine.file_write(self.option.celeryconfig_file, celeryconfig_content)
+        :return:
+        """
+        puts(green("Setup app server project"))
+
+        proj = AppServerProject(self)
+        proj.setup_source_files()
+        proj.configure(options)
 
     def setup(self, options):
-        self.setup_celeryapp(options)
-        self.setup_celery_service()
+        self.setup_service_celery()
+        self.setup_project_appserver(options)
+
+    def post_deploy(self):
+        super(AppHost, self).post_deploy()
+        cuisine.run('chown -R {0}:{1} {2}' \
+                    .format(self.option.deploy_user, self.option.deploy_group,
+                            self.option.wxgigo_appserver_home))
+
+
 
 
 
