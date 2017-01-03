@@ -40,7 +40,7 @@ process_num = uwsgi process number
 thread_num = uwsgi thread number
 ```
 
-Note: You can override all options from DEFAULT section for Wechat/DB/App server in it's own section,
+> Note: You can override all options from DEFAULT section for Wechat/DB/App server in it's own section,
 e,g: Deploy Wechat server in wechat.test.com, and deploy DB server in db.test.com:
 
 ```
