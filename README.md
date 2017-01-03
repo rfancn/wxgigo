@@ -8,7 +8,7 @@ Installation
 ============
 1. Download and extract "dist" directory into any linux server
 2. Edit "dist/config.ini" as you needed or leave it empty
-3. Run `sh dist/setup.sh`
+3. Run `$ sh dist/setup.sh`
 
 Configuration
 =============
