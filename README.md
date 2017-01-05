@@ -1,8 +1,8 @@
 # 写在前面的话
 
-如果大家觉得还好用的话，有时间可以去[**关系Go!**](http://www.guanxigo.com)帮忙点击下广告支持服务器运营, 以便后续提供更好的支持。有时候我们一个微小不经意的举动，却是最好的肯定与支持，先谢谢了!
+如果大家觉得还好用的话，相信同样喜欢分享的你一定会记得去[**关系Go!**](http://www.guanxigo.com)帮忙点击下广告来支持项目的继续开发和运营哦！有时候我们一个微小不经意的举动，却是最好的肯定与支持，先谢谢了!
 
-If you feels it is helpful, pls support me by clicking AD in websiste [**guanxigo**](http://www.guanxigo.com) if you have free time, thanks in advance!
+If you feels it is helpful, pls kindly support me by clicking AD in websiste [**guanxigo**](http://www.guanxigo.com) if you have free time, thanks in advance!
 
 ## wxgigo(Experimental)
 
