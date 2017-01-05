@@ -1,17 +1,23 @@
-wxgigo(Experimental)
-=====================================================
+# 写在前面的话
+
+如果大家觉得还好用的话，有时间可以去[**关系Go!**](http://www.guanxigo.com)帮忙点击下广告支持服务器运营, 以便后续提供更好的支持。有时候我们一个微小不经意的举动，却是最好的肯定与支持，先谢谢了!
+
+If you feels it is helpful, pls support me by clicking AD in websiste [**guanxigo**](http://www.guanxigo.com) if you have free time, thanks in advance!
+
+## wxgigo(Experimental)
+
 The framework for developing private Tencent Wechat public platform
 
 Currently it is under active development, no meaningful commit comments for all changes, as all may be reset in the future.
 
-Installation
-============
+## Installation
+
 1. Download and extract "dist" directory into any linux server
 2. Edit "dist/config.ini" as you needed or leave it empty
 3. Run `$ sh dist/setup.sh`
 
-Configuration
-=============
+## Configuration
+
 All configuration can be defined in config.ini, or you can leave empty for all configuration items and input it in interactive mode.
 ```
 [DEFAULT]
