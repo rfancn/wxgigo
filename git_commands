@@ -1,0 +1,11 @@
+Q1. How to backup current master branch as old version and start a new one?
+---------------------------------------------------------------------------
+1. rename current master to backup name or old version name
+- git branch -m master <backup name> 
+
+2. push to remote
+- git push origin <backup name>
+
+3. checkout to remote master
+- git checkout master
+
