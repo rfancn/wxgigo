@@ -1,34 +1,39 @@
 {% extends "apps/member/base.html" %}
 
 {% block content %}
-<div class="weui-flex">
-    <div class="weui-flex__item"></div>
-    <div class="weui-flex__item">
-        <div class="placeholder">
-            <div class="weui-cells">
-                <div class="weui-cell">
-                    <div class="weui-cell__hd"></div>
-                    <div id="app" class="weui-cell__bd">
-                        [[ message ]]
-                    </div>
-                    <div class="weui-cell__ft"></div>
+<div class="weui-cells weui-cells_form">
+            <div class="weui-cell">
+                <div class="weui-cell__hd"><label class="weui-label">证件号码：</label></div>
+                <div class="weui-cell__bd">
+                    <input name="search8_idcard" class="weui-input" type="text" placeholder="请输入身份证号">
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="weui-flex__item"></div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd">
+                    <label class="weui-label">购房人名：</label>
+                </div>
+                <div class="weui-cell__bd">
+                    <input name="search8_name" class="weui-input" type="tel" placeholder="请输入姓名">
+                </div>
+            </div>
+            <div class="weui-cell">
+                <div class="weui-cell__hd"><label class="weui-label">房号：</label></div>
+                <div class="weui-cell__bd">
+                    <input name="search8_room" class="weui-input" type="number" pattern="[0-9]*" placeholder="请直接输入房号无需栋号">
+                </div>
+            </div>
+            <div class="weui-cell weui-cell_vcode">
+                <div class="weui-cell__hd"><label class="weui-label">验证码</label></div>
+                <div class="weui-cell__bd">
+                    <input name="search8_verify_code" class="weui-input" placeholder="请输入验证码">
+                </div>
+                <div class="weui-cell__ft">
+                    <img id="search8_v_code" class="weui-vcode-img" src="http://szjw.changsha.gov.cn/index.php/home/common/verifycode.html?PHPSESSID={{ PHPSESSID }}">
+                </div>
+            </div>
 </div>
+ <a href="query_szjw/" class="weui-btn weui-btn_primary">查询</a>
+</form>
+
 {% endblock %}
 
-{% block myjs %}
-<script src="//cdn.bootcss.com/vue/2.0.6/vue.min.js"></script>
-<script>
-    var app = new Vue({
-      delimiters: ['[[', ']]'],
-      el: '#app',
-      data: {
-        message: 'Hello Vue!'
-      }
-    });
-</script>
-{% endblock %}
