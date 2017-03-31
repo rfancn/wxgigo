@@ -1,0 +1,24 @@
+---
+#################
+# General Tasks #
+#################
+- name: Create normal user and update password if it doesn't exist
+  user: name={{ normal_user }} password={{ normal_user_password | password_hash('sha512') }}
+
+##############################
+# Distribution related tasks #
+##############################
+- include: tasks/{{ ansible_os_family | lower }}/{{ item }}.yml
+  become: true
+  with_items:
+    - add_sudoers
+    - ensure_epel
+    - ensure_pip
+    - disable_selinux
+    - secure_ssh
+
+
+
+
+
+

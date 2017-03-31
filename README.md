@@ -8,7 +8,7 @@ If you feels it is helpful, pls kindly support me by clicking AD in websiste [**
 
 The framework for developing applications with Tencent Wechat public platform or Wechat API
 
-### Python compatibility¶
+### Python compatibility
 
 As most depended application needs at least Python2.7 or later
 
@@ -136,3 +136,4 @@ ssh_host = db.test.com
 ssh_user = oracle
 ssh_password = ******
 ```
+

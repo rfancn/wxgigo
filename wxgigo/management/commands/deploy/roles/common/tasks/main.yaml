@@ -1,0 +1,3 @@
+---
+- name: Make sure python2.7 is installed
+  when: ansible_python.version.major == 2 and ansible_python.version.minor < 7

@@ -1,0 +1,10 @@
+---
+- hosts: AGENT_HOST
+  any_errors_fatal: true
+  #gather_facts: False
+  vars:
+    wxgigo_virtualenv_dir: .wxgigo-venv
+  roles:
+    - init_env
+    #- common
+    #- agentservers

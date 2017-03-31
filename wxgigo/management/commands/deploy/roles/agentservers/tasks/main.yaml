@@ -1,0 +1,12 @@
+---
+- name: Test
+  debug: msg="{{ wxgigo_virtualenv_dir }}"
+#- name: Install virtualenv package
+#  pip: name=virtualenv
+#  become: true
+#- name: Install pytz package
+#  pip:
+#    name:
+#    extra_args: -i https://pypi.douban.com/simple
+#    virtualenv: "{{ ansible_env.HOME}}/.wxgigo-venv"
+
