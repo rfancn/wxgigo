@@ -6,9 +6,85 @@ If you feels it is helpful, pls kindly support me by clicking AD in websiste [**
 
 ## wxgigo(Experimental)
 
-The framework for developing private Tencent Wechat public platform
+The framework for developing applications with Tencent Wechat public platform or Wechat API
 
-Currently it is under active development, no meaningful commit comments for all changes, as all may be reset in the future.
+### Python compatibility¶
+
+As most depended application needs at least Python2.7 or later
+
+### Wechat Media Platform application workflow (Draw on https://textik.com/)
+                          |-- Send Message ---|
+                          |                   |
++--------+ Trigger Event  |-- Scan QRCode ----|     +---------------+
+|  User  |--------------->|   ...             |---> | Weixin Server |
++--------+                |-- Click Menu  ----|     +---------------+
+                          |                   |             ^
+                          |                   |             |
+                                                        XML Message
+                                                            |
+                                                            v
+                         +--------------------------------------------------------------------+
+                         |                          +-----------------+                       |
+                         |  WXGIGO Agent Server     | Nginx or Apache |                       |
+                         |                          +-----------------+                       |
+                         |                                  ^                                 |
+                         |                                  |                                 |
+                         |                            WSGI Protocal                           |
+                         |                                  |                                 |
+                         |                                  v                                 |
+                         |          +--------------------------------------------+            |
+                         |          |                       |                    |            |
+                         |          v                       v                    v            |
+                         |  +-----------------+    +-----------------+   +-----------------+  |
+                         |  |WSGI Application |    |WSGI Application |   |WSGI Application |  |
+                         |  +-----------------+    +-----------------+   +-----------------+  |
+                         |          |                       |                    |            |
+                         |          |                       |                    |            |
+                         |          +--------------------------------------------+            |
+                         |                                  |                                 |
+                         +----------------------------------|---------------------------------+
+                                                            ^
+                                                            |
+                                                      AMQP Protocal
+                                                            |
+                                                            v
+                                                 +----------------------+
+                                                 |      AMQP Broker     |
+                                                 +----------------------+
+                                                            ^
+                                                       AMQP |Protocal
+                                                            v
+                         +---------------------------------------------------------------------+
+                         |  WXGIGO App Server               ^                                  |
+                         |                       Msg1, Msg2, Msg3, ..., MsgN                   |
+                         |                                  |                                  |
+                         |                     Task1, Task2, Taks3,... TaskN                   |
+                         |                                  |                                  |
+                         |                                  |                                  |
+                         |          Work1, Worker2 ........................ WorkerN            |
+                         |                                                                     |
+                         +---------------------------------------------------------------------+
+                                                             ^
+                                                             |
+                                                             v
+                         +---------------------------------------------------------------------+
+                         | WXGIGO DB Server            Result Backend                          |
+                         |                             (DB Or Cache)                           |
+                         +---------------------------------------------------------------------+
+
+### Server Roles
+Based on workflow, there are three kinds of server role when deploying application for Weixin Media Platform,
+Now I implements below setup, it will support more combination implemenation in the future:
+
+1. Wxgigo Agent Server: nginx+ uwsgi + django app(wxgigo-agent)
+2. Wxgigo App Server: wxgigo-appserver
+3. Wxgigo DB Server: redis
+
+Note:
+* Wxgigo Agent Server only needed when developing application for Weixin Media Platform
+
+## Switch to Develope mode
+$ sudo python setup.py develop
 
 ## Installation
 
